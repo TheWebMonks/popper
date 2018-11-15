@@ -1,0 +1,23 @@
+{
+  "name": "popper",
+  "version": "1.0.0",
+  "description": "API to convert HTML to pdf. A REST API around Puppeteer",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/api.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheWebMonks/popper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheWebMonks/popper/issues"
+  },
+  "homepage": "https://github.com/TheWebMonks/popper#readme",
+  "dependencies" : {
+    "puppeteer": "1.10.0",
+    "express": "4.16.4"
+  }
+}
