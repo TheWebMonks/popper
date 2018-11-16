@@ -4,6 +4,16 @@ const puppeteer = require('puppeteer');
 const app = express();
 const API_KEY = process.env.API_KEY;
 
+
+// Setup the browser instance
+let BROWSER = null;
+(async () => {
+  BROWSER = await puppeteer.launch({
+    executablePath: '/usr/bin/chromium-browser',
+    args: ['--no-sandbox', '--disable-dev-shm-usage']
+  });
+})();
+
 function auth(req, res, next) {
   const key = req.query.api_key;
   if (API_KEY && API_KEY === key) {
@@ -15,23 +25,19 @@ function auth(req, res, next) {
 }
 
 app.get('/', function (req, res) {
-  res.send('Hello World')
+  res.send({'message': 'Hello World'});
 });
 
 /**
  * Usage:
- * curl 'http://localhost:3000/convert?api_key=demo&url=https://google.com' -o output.pdf
+ * curl 'http://localhost:3000/v1/convert?api_key=demo&url=https://google.com' -o output.pdf
  */
 app.get('/v1/convert', auth, async (req, res) => {
   const url = req.query.url;
   const download = req.query.download || false;
 
   if (url) {
-    const browser = await puppeteer.launch({
-      executablePath: '/usr/bin/chromium-browser',
-      args: ['--no-sandbox', '--disable-dev-shm-usage']
-    });
-    const page = await browser.newPage();
+    const page = await BROWSER.newPage();
     await page.goto(url, {waitUntil: 'networkidle2'});
     const pdf = await page.pdf({
       format: 'A4',
@@ -42,7 +48,6 @@ app.get('/v1/convert', auth, async (req, res) => {
         left: '50px'
       }
     });
-    await browser.close();
 
     if (download) {
       const filename = new Date().getTime() + '.pdf';
